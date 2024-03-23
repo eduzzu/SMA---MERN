@@ -3,12 +3,10 @@ const studentSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: true,
-        min: 2,
     },
     lastName: {
         type: String,
         required: true,
-        min: 2
     },
     email: {
         type: String,
@@ -34,7 +32,7 @@ const studentSchema = new mongoose.Schema({
     },
     role:{
         type: String,
-        required: true
+        default: "Student"
     },
     studyYear: {
         type: Number,

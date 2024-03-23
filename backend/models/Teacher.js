@@ -35,7 +35,7 @@ const teacherSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        required: true
+        default: "Teacher"
     },
     courses: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -47,10 +47,6 @@ const teacherSchema = new mongoose.Schema({
         ref: 'Schedule',
         default: []
     }],
-    friends: {
-        type: Array,
-        default: [],
-      },
 }, {timestamps: true});
 
 const Teacher = mongoose.model("Teacher", teacherSchema);

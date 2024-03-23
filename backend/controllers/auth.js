@@ -1,112 +1,53 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import Student from "../models/Student";
-import Teacher from "../models/Teacher";
+import Student from "../models/Student.js";
+import Teacher from "../models/Teacher.js";
+import Admin from "../models/Admin.js";
 
-/* REGISTER USER */
+/* REGISTER ADMIN */
 
-export const register = async(req, res) => {
+export const registerAdmin = async(req, res) => {
     try{
-        const {role} = req.body;
-        if(role === "student"){
-            return res.redirect("/register/student");
-        } else if(role === "teacher"){
-            return res.redirect("/register/teacher");
-        } else throw new Error('Invalid role specified.')
-    } catch(error){
-        res.status(500).json({message: error.message});
-    }
+        const {firstName, lastName, email, password, role} = req.body;
+        const existingAdmin = await Admin.findOne({email});
+        if(existingAdmin){
+            return res.status(400).json({message: "This admin already exists!"});
+        }
 
-}
+        const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(password, salt);
 
-/* REGISTER STUDENT */
-
-export const registerStudent = async(req, res) => {
-    try{
-        const {
-            firstName,
-            lastName,
-            email,
-            password,
-            picturePath,
-            faculty,
-            field,
-            studyYear,
-            degree,
-            friends
-        } = req.body;
-
-        const salt = bcrypt.genSalt();
-        passwordHash = await bcrypt.hash(password, salt);
-
-        const newStudent = new Student({
+        const newAdmin = new Admin({
             firstName,
             lastName,
             email,
             password: passwordHash,
-            picturePath,
-            faculty,
-            field,
-            studyYear,
-            degree,
-            friends
+            role
         });
-         const savedStudent = await newStudent.save();
-         res.status(201).json(savedStudent);
-    } catch (error) {
-        res.status(500).json({message: error.message});
-    }
-}
 
-/* REGISTER TEACHER */
+        const savedAdmin = await newAdmin.save();
+        res.status(201).json({savedAdmin});
 
-export const registerTeacher = async(req, res) => {
-    try{
-        const {
-            firstName,
-            lastName,
-            email,
-            password,
-            picturePath,
-            faculty,
-            field,
-            friends
-        } = req.body;
-
-        const salt = bcrypt.genSalt();
-        passwordHash = await bcrypt.hash(password, salt);
-
-        const newTeacher = new Teacher({
-            firstName,
-            lastName,
-            email,
-            password: passwordHash,
-            picturePath,
-            faculty,
-            field,
-            friends
-    });
-
-        const savedTeacher = await newTeacher.save();
-        res.status(200).json(savedTeacher);
-
-    } catch(error) {
+    }catch(error){
         res.status(500).json({message: error.message})
     }
 }
 
-/* LOGIN STUDENT/TEACHER */
+
+/* LOGIN STUDENT/TEACHER/ADMIN */
 
 export const login = async(req, res) => {
     try{
-        const {email, password, role} = req.body;
-        if(role === "student"){
-            const user = await Student.findOne({email: email, role: role});
-        } else if(role === "teacher"){
-            user = await Teacher.findOne({email: email, role: role})
-        } else throw new Error('Invalid role specified.');
+        let user;
+        const {email, password} = req.body;
+        if(email.endsWith('student.edu')){
+            user = await Student.findOne({email: email});
+        } else if(email.endsWith('teacher.edu')){
+            user = await Teacher.findOne({email: email}); 
+        } else if(email.endsWith('admin.edu')){
+            user = await Admin.findOne({email: email});
+        }
         if(!user) return res.status(400).json({msg: "User does not exist."});
-
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch) return res.status(400).json({msg: "Invalid credentials."});
 

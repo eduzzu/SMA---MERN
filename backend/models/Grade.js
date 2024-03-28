@@ -6,8 +6,6 @@ const gradeSchema = new mongoose.Schema({
         ref: 'Course',
         required: true
     },
-
-
     grade: {
         type: Number,
         required: true

@@ -4,7 +4,6 @@ const scheduleSchema = new mongoose.Schema({
     dayOfWeek: {
         type: String,
         required: true,
-        min: 6,
     },
     startTime:{
         type: String,

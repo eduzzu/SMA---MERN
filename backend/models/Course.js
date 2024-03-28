@@ -15,11 +15,6 @@ const courseSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-
-    domain: {
-        type: String,
-        required: true
-    },
     studyYear: {
         type: Number,
         required: true,

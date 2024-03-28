@@ -12,6 +12,8 @@ import { registerStudent } from "./controllers/admins.js";
 import { registerTeacher } from "./controllers/admins.js";
 import  authRoutes  from "./routes/auth.js";
 import studentRoutes from "./routes/student.js";
+import teacherRoutes from "./routes/teacher.js";
+import adminRoutes from "./routes/admin.js";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -45,6 +47,11 @@ app.post("/admin/register/teacher", upload.single("picture"), registerTeacher);
 
 app.use("/auth", authRoutes);
 app.use("/student", studentRoutes);
+app.use("/teacher", teacherRoutes);
+app.use("/admin", adminRoutes);
+
+
+
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL)

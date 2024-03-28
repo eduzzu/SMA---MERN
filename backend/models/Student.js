@@ -59,10 +59,6 @@ const studentSchema = new mongoose.Schema({
         ref: 'Schedule',
         default: []
     }],
-    friends: {
-        type: Array,
-        default: [],
-      }
     
 }, {timestamps: true});
 
